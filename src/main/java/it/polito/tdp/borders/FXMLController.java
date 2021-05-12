@@ -2,11 +2,15 @@
 package it.polito.tdp.borders;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.borders.model.Country;
 import it.polito.tdp.borders.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -19,6 +23,12 @@ public class FXMLController {
 
     @FXML // URL location of the FXML file that was given to the FXMLLoader
     private URL location;
+    
+    @FXML // fx:id="cmbNazioni"
+    private ComboBox<Country> cmbNazioni; // Value injected by FXMLLoader
+    
+    @FXML // fx:id="btnStatiRaggiungibili"
+    private Button btnStatiRaggiungibili; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtAnno"
     private TextField txtAnno; // Value injected by FXMLLoader
@@ -28,6 +38,32 @@ public class FXMLController {
 
     @FXML
     void doCalcolaConfini(ActionEvent event) {
+    	this.txtResult.clear();
+    	int year;
+    	
+    	try {
+    		year = Integer.parseInt(this.txtAnno.getText());
+    	} catch(NumberFormatException e) {
+    		this.txtResult.setText("You must insert a NUMBER between 1816 and 2006");
+    		return;
+    	}
+    	
+    	this.model.createGraph(year);
+    	this.txtResult.appendText(model.getNoOfVertexANDEdges()+"\n");
+    	this.txtResult.appendText("Number of connected components: "+model.getNoOfConnectedComponents()+"\n\n");
+    	
+    	Map<Country, Integer> map = this.model.getVerticesWithDegree();
+    	for(Country c : map.keySet()) 
+    		this.txtResult.appendText(c.getStateNme()+": "+map.get(c)+"\n");
+    	
+    	this.btnStatiRaggiungibili.setDisable(false);
+    	this.cmbNazioni.getItems().addAll(map.keySet());
+    }
+    
+    @FXML
+    void doStatiRaggiungibili(ActionEvent event) {
+    	
+    	
 
     }
 
@@ -35,7 +71,10 @@ public class FXMLController {
     void initialize() {
         assert txtAnno != null : "fx:id=\"txtAnno\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Scene.fxml'.";
+        assert cmbNazioni != null : "fx:id=\"cmbNazioni\" was not injected: check your FXML file 'Scene.fxml'.";
+        assert btnStatiRaggiungibili != null : "fx:id=\"btnStatiRaggiungibili\" was not injected: check your FXML file 'Scene.fxml'.";
 
+        txtResult.setStyle("-fx-font-family: monospace");
     }
     
     public void setModel(Model model) {
