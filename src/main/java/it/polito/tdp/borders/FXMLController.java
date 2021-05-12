@@ -2,8 +2,10 @@
 package it.polito.tdp.borders;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import it.polito.tdp.borders.model.Country;
 import it.polito.tdp.borders.model.Model;
@@ -62,8 +64,21 @@ public class FXMLController {
     
     @FXML
     void doStatiRaggiungibili(ActionEvent event) {
+    	this.txtResult.clear();
     	
+    	Country country = this.cmbNazioni.getValue();
+    	if(country == null) {
+    		this.txtResult.appendText("You must select a country");
+    		return;
+    	}
     	
+    	//Set<Country> reachableCountries = this.model.reachableCountries1(country);
+    	//List<Country> reachableCountries = this.model.reachableCountries2(country);
+    	List<Country> reachableCountries = this.model.reachableCountries3(country);
+    	
+    	this.txtResult.appendText("Reachable countries: "+reachableCountries.size()+"\n\n");
+    	for(Country c : reachableCountries) 
+    		this.txtResult.appendText(c+"\n");
 
     }
 
